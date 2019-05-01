@@ -1,45 +1,90 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Softplan.CalcTest.Shared;
+using System;
+using System.Net;
 
 namespace Softplan.CalcTest.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        // GET api/values
+        private readonly string _url = "https://github.com/LeviGuilhermeSilveira/SoftplanCalcTest";
+
+        public ValuesController(string url = null, bool useCurrentValue = true)
+        {
+            if (!useCurrentValue)
+                _url = url;
+        }
+
+        /// <summary>
+        /// Retornar a url de onde encontra-se o fonte no GitHub.
+        /// </summary>
+        /// <returns>
+        /// String: URL
+        /// </returns>
+        /// <remarks>
+        /// Este responde pelo path relativo /showmethecode
+        /// Deverá retornar a url de onde encontra-se o fonte no github
+        /// </remarks>
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        [Route("showmethecode")]
+        public ActionResult<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            Validator validator = new Validator();
+            validator.Validate(validate =>
+            {
+                validate.UriValidation
+                    .ForlNotNullUrl(_url)
+                    .ForNotEmptyUrl(_url)
+                    .ForValidUrl(_url);
+            });
+
+            if (validator.IsValid)
+                return Ok(_url);
+            else
+                return StatusCode((int)HttpStatusCode.InternalServerError, validator.ErrorMessage);
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
+        /// <summary>
+        /// Efetua cálculo de juros compostos.
+        /// </summary>
+        /// <param name="valorInicial"></param>
+        /// <param name="meses"></param>
+        /// <returns>
+        /// Double: Montante
+        /// </returns>
+        /// <remarks>
+        /// Este reponde pelo path relativo "/calculajuros"
+        /// Faz um cálculo em memória, de juros compostos, conforme abaixo: 
+        /// Valor Final = Valor Inicial* (1 + juros) ^ Tempo
+        /// </remarks>
         [HttpPost]
-        public void Post([FromBody] string value)
+        [Route("calculajuros")]
+        public ActionResult<string> Post([FromQuery] decimal valorInicial, int meses)
         {
-        }
+            Validator validator = new Validator();
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+            validator.Validate(validate =>
+            {
+                validate.NumberValidation
+                    .IsGreaterThanZero(valorInicial)
+                    .IsGreaterThanZero(meses);
+            });
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            if (!validator.IsValid)
+                return StatusCode((int)HttpStatusCode.InternalServerError, validator.ErrorMessage);
+
+            double capital = (double)valorInicial;
+            double indice = 0.01;
+            double taxa = 1 + indice;
+            double periodo = meses;
+
+            var montante = capital * (Math.Pow(taxa, periodo));
+
+            var result = Math.Truncate(montante * 100) / 100;
+
+            return Ok(result.ToString("F"));
         }
     }
 }
