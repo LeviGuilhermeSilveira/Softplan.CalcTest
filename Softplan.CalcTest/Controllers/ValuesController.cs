@@ -9,7 +9,7 @@ namespace Softplan.CalcTest.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private readonly string _url = "https://github.com/LeviGuilhermeSilveira/SoftplanCalcTest";
+        private readonly string _url = "https://github.com/LeviGuilhermeSilveira/Softplan.CalcTest";
 
         public ValuesController(string url = null, bool useCurrentValue = true)
         {
