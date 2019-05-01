@@ -1,0 +1,77 @@
+{
+	"info": {
+		"_postman_id": "1238974d-6907-479b-a671-e8d9ad404282",
+		"name": "SoftplanTests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Show me the code",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:54007/api/showmethecode",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "54007",
+					"path": [
+						"api",
+						"showmethecode"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Calcula juros",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:54007/api/calculajuros?valorInicial=100&meses=5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "54007",
+					"path": [
+						"api",
+						"calculajuros"
+					],
+					"query": [
+						{
+							"key": "valorInicial",
+							"value": "100"
+						},
+						{
+							"key": "meses",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
